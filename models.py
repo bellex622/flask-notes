@@ -24,7 +24,7 @@ class User(db.Model):
         nullable=False
     )
 
-    passowrd = db.Column(
+    password = db.Column(
         db.String(100),
         nullable=False
     )
