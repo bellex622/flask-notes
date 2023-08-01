@@ -1,5 +1,5 @@
 """Flask app for Cupcakes"""
-from flask import Flask, redirect, render_template, jsonify, request
+from flask import Flask, redirect, render_template, jsonify, request, session
 from flask_debugtoolbar import DebugToolbarExtension
 
 from models import db, connect_db, User
@@ -43,7 +43,7 @@ def register():
         last_name = form.last_name.data
         email = form.email.data
 
-        user = User(
+        user = User.register(
             username=username,
             password=password,
             first_name=first_name,
@@ -61,7 +61,31 @@ def register():
         return render_template('registration_form.html', form=form)
 
 
-# @app.route("/login", methods=["GET", "POST"])
+@app.route("/login", methods=["GET", "POST"])
+def longin():
+    """display login form; handle user login"""
+
+    form = LoginForm()
+
+    if form.validate_on_submit():
+        username = form.username.data
+        password = form.password.data
+
+        user = User.authenticate(username, password)
+        print("\n\n\nuser is ---------->", user)
+
+        if user:
+            session["username"] = user.username  # keep logged in
+            return redirect(f'/users/{user.username}')
+
+        else:
+            form.username.errors = ["Bad name/password"]
+
+    return render_template('login_form.html', form=form)
+
+
+
+
 
 
 
