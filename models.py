@@ -2,10 +2,11 @@
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
 
-bcrypt = Bcrypt()
-
 
 db = SQLAlchemy()
+
+bcrypt = Bcrypt()
+
 
 
 def connect_db(app):
@@ -66,6 +67,8 @@ class User(db.Model):
                    first_name=first_name,
                    last_name=last_name,
                    email=email)
+
+
 
     @classmethod
     def authenticate(cls, username, password):

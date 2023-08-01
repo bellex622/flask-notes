@@ -4,7 +4,7 @@ from models import db, User
 db.drop_all()
 db.create_all()
 
-user1 = User(
+user1 = User.register(
     username="user1",
     password="password1",
     first_name='firstname1',
@@ -12,7 +12,7 @@ user1 = User(
     email='firstname1@gmail.com'
 )
 
-user2 = User(
+user2 = User.register(
     username="user2",
     password="password2",
     first_name='firstname2',

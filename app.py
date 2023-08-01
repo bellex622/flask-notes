@@ -1,10 +1,10 @@
 """Flask app for Cupcakes"""
-from flask import Flask, redirect, render_template, jsonify, request, session
+
+from flask import Flask, redirect, render_template, jsonify, request, session, flash
 from flask_debugtoolbar import DebugToolbarExtension
 
 from models import db, connect_db, User
-from forms import RegistrationForm, LoginForm
-from flask_bcrypt import Bcrypt
+from forms import RegistrationForm, LoginForm, CSRFProtectForm
 
 
 app = Flask(__name__)
@@ -62,7 +62,7 @@ def register():
 
 
 @app.route("/login", methods=["GET", "POST"])
-def longin():
+def login():
     """display login form; handle user login"""
 
     form = LoginForm()
@@ -75,7 +75,9 @@ def longin():
         print("\n\n\nuser is ---------->", user)
 
         if user:
-            session["username"] = user.username  # keep logged in
+            session["username"] = user.username
+
+            print('*****session', session)
             return redirect(f'/users/{user.username}')
 
         else:
@@ -84,8 +86,30 @@ def longin():
     return render_template('login_form.html', form=form)
 
 
+@app.get('/users/<username>')
+def display_user(username):
+    """Show information about a user"""
+
+    user = User.query.get_or_404(username)
+
+    if "username" not in session:
+        flash("You must be logged in to view!")
+        return redirect('/login')
+
+    return render_template('user_details.html', user=user)
 
 
+@app.post('/logout')
+def logout():
+
+    form = CSRFProtectForm()
+
+    if form.validate_on_submit():
+        session.pop('username', None)
+
+    print("----->session", session)
+
+    return redirect('/')
 
 
 
