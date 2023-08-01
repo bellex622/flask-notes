@@ -1,0 +1,44 @@
+"""Forms for """
+
+from wtforms import SelectField, StringField
+from wtforms.validators import InputRequired, Email
+from flask_wtf import FlaskForm
+
+class RegistrationForm(FlaskForm):
+    """Form for user registration"""
+
+    username = StringField(
+        "Username",
+        validators=[InputRequired()])
+
+    password = StringField(
+        "Password",
+        validators=[InputRequired()])
+
+    email = StringField(
+        "Email",
+        validators=[InputRequired(),Email()])
+
+    first_name = StringField(
+        "First_Name",
+        validators=[InputRequired()])
+
+    last_name = StringField(
+        "Last_Name",
+        validators=[InputRequired()])
+
+class LoginForm(FlaskForm):
+    """Form for user login."""
+    username = StringField(
+        "Username",
+        validators=[InputRequired()])
+
+    password = StringField(
+        "Password",
+        validators=[InputRequired()])
+
+class CSRFProtectForm(FlaskForm):
+    """Form just for CSRF Protection"""
+
+
+
