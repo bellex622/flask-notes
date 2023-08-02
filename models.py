@@ -8,7 +8,6 @@ db = SQLAlchemy()
 bcrypt = Bcrypt()
 
 
-
 def connect_db(app):
     """Connect this database to provided Flask app.
     """
@@ -19,7 +18,7 @@ def connect_db(app):
 
 
 class User(db.Model):
-    """Create properties and method for cupcake"""
+    """Create new user"""
 
     __tablename__ = "users"
 
@@ -50,13 +49,6 @@ class User(db.Model):
         nullable=False
     )
 
-    def serialize(self):
-        """Serialize to dictionary."""
-
-        return {
-
-        }
-
     @classmethod
     def register(cls, username, password, first_name, last_name, email):
         """Register user w/hashed password & return user."""
@@ -67,8 +59,6 @@ class User(db.Model):
                    first_name=first_name,
                    last_name=last_name,
                    email=email)
-
-
 
     @classmethod
     def authenticate(cls, username, password):

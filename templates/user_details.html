@@ -11,7 +11,11 @@
 
 
 <form action="/logout" method="POST">
+
+  {{ form.hidden_tag() }} <!--add type=hidden form fields -->
+
   <button type="submit">Logout</button>
+
 </form>
 
 {% endblock %}

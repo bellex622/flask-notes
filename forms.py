@@ -10,7 +10,7 @@ class RegistrationForm(FlaskForm):
 
     username = StringField(
         "Username",
-        validators=[InputRequired()])
+        validators=[InputRequired()]) #use max/min len validator
 
     password = PasswordField(
         "Password",
@@ -37,6 +37,7 @@ class LoginForm(FlaskForm):
     password = PasswordField(
         "Password",
         validators=[InputRequired()])
+
 
 class CSRFProtectForm(FlaskForm):
     """Form just for CSRF Protection"""

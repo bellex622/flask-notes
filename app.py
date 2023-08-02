@@ -1,6 +1,6 @@
-"""Flask app for Cupcakes"""
+"""Flask app for notes"""
 
-from flask import Flask, redirect, render_template, jsonify, request, session, flash
+from flask import Flask, redirect, render_template, request, session, flash
 from flask_debugtoolbar import DebugToolbarExtension
 
 from models import db, connect_db, User
@@ -14,7 +14,7 @@ app.config['SQLALCHEMY_ECHO'] = True
 
 connect_db(app)
 
-app.config['SECRET_KEY'] = "I'LL NEVER TELL!!"
+app.config['SECRET_KEY'] = "I'LL NEVER TELL!!" #put in a separate file
 
 # Having the Debug Toolbar show redirects explicitly is often useful;
 # however, if you want to turn it off, you can uncomment this line:
@@ -22,6 +22,7 @@ app.config['SECRET_KEY'] = "I'LL NEVER TELL!!"
 app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
 
 debug = DebugToolbarExtension(app)
+
 
 @app.get("/")
 def root():
@@ -32,7 +33,7 @@ def root():
 
 @app.route("/register", methods=["GET", "POST"])
 def register():
-    """Registers a user"""
+    """display registration form; handle user registration"""
 
     form = RegistrationForm()
 
@@ -52,7 +53,9 @@ def register():
         )
 
         db.session.add(user)
-        db.session.commit()
+        db.session.commit()#moving in to register method
+
+        session["username"] = user.username #make a global variable for "username"
 
         return redirect(f'/users/{user.username}')
 
@@ -64,6 +67,8 @@ def register():
 @app.route("/login", methods=["GET", "POST"])
 def login():
     """display login form; handle user login"""
+
+    #check if a user already in session
 
     form = LoginForm()
 
@@ -91,26 +96,27 @@ def display_user(username):
     """Show information about a user"""
 
     user = User.query.get_or_404(username)
+    form = CSRFProtectForm()
 
-    if "username" not in session:
+    #if session.get("username")==username
+    if "username" not in session: #
         flash("You must be logged in to view!")
         return redirect('/login')
 
-    return render_template('user_details.html', user=user)
+    return render_template('user_details.html', user=user, form=form)
 
 
 @app.post('/logout')
 def logout():
+    """logout user and redirect to homepage"""
 
     form = CSRFProtectForm()
 
     if form.validate_on_submit():
-        session.pop('username', None)
+        session.pop('username')
+        print("----->after logout session", session)
 
-    print("----->session", session)
+    #else, flash message
+
 
     return redirect('/')
-
-
-
-
