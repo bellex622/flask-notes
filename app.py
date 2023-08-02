@@ -23,6 +23,7 @@ app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
 
 debug = DebugToolbarExtension(app)
 
+SESSION_KEY = 'username'
 
 @app.get("/")
 def root():
@@ -34,6 +35,9 @@ def root():
 @app.route("/register", methods=["GET", "POST"])
 def register():
     """display registration form; handle user registration"""
+
+    if SESSION_KEY in session:
+        return redirect(f'/users/{session[SESSION_KEY]}')
 
     form = RegistrationForm()
 
@@ -52,10 +56,9 @@ def register():
             email=email
         )
 
-        db.session.add(user)
         db.session.commit()#moving in to register method
 
-        session["username"] = user.username #make a global variable for "username"
+        session[SESSION_KEY] = user.username #make a global variable for "username"
 
         return redirect(f'/users/{user.username}')
 
@@ -69,6 +72,8 @@ def login():
     """display login form; handle user login"""
 
     #check if a user already in session
+    if SESSION_KEY in session:
+        return redirect(f'/users/{session[SESSION_KEY]}')
 
     form = LoginForm()
 
@@ -80,7 +85,7 @@ def login():
         print("\n\n\nuser is ---------->", user)
 
         if user:
-            session["username"] = user.username
+            session[SESSION_KEY] = user.username
 
             print('*****session', session)
             return redirect(f'/users/{user.username}')
@@ -99,7 +104,8 @@ def display_user(username):
     form = CSRFProtectForm()
 
     #if session.get("username")==username
-    if "username" not in session: #
+
+    if "username" not in session or session.get(SESSION_KEY) != username:
         flash("You must be logged in to view!")
         return redirect('/login')
 
@@ -113,7 +119,7 @@ def logout():
     form = CSRFProtectForm()
 
     if form.validate_on_submit():
-        session.pop('username')
+        session.pop(SESSION_KEY)
         print("----->after logout session", session)
 
     #else, flash message
